@@ -15,8 +15,8 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 
 using namespace std;
 
-int GLOBAL_DEPTH = 40, enough = 28;
-int threadCount = 2040;
+int GLOBAL_DEPTH = 100, enough = 28;
+int threadCount = 45;
 
 std::recursive_mutex m_mutex;
 int globalCounter = 4;
@@ -26,18 +26,19 @@ deque<deque<int> > initField(int h, int w) {
     deque<deque<int> > field(h, deque<int> (w,0));
     
     vector< vector<pair<int, int> > > stonesBlack = {
-        {{0,0},{0,1}}, {{0,0}}, {{0,0},{1,0}}, {{0,0},{0,1},{1,0},{1,1}}
+        {{0,0},{0,1}}, {{0,0}}, {{0,0}}, {{0,0},{1,0}}, {{0,0},{0,1},{1,0},{1,1}}
     };
     vector< vector<pair<int,int> > > stonesRed = stonesBlack;
     vector<vector<pair<int,int> > > stonesYellow = stonesBlack;
     int yellowBlocksToBePlaced = 1;
-    int darkBlocksToBePlaced = 11 + (rand() % 50) - 3;
-    int redBlocksToBePlaced = 7 + (rand()%50) - 3;
+    int darkBlocksToBePlaced = 11 + (rand() % 20) - 3;
+    int redBlocksToBePlaced = 7 + (rand()%20) - 3;
     
     
     
     while(yellowBlocksToBePlaced != 0) {
         int offsetY = rand() % h; int offsetX = rand() % w;
+        offsetY = h/2; offsetX = w/2;
         int randTile = rand() % stonesYellow.size();
         bool noAdd = false;
         for(int i = 0; i < stonesYellow[randTile].size(); ++i) {
@@ -104,7 +105,7 @@ deque<deque<int> > initSymmetricField(int fh, int fw) {
     deque<deque<int> > field(fh, deque<int> (fw,0));
     
     vector< vector<pair<int, int> > > stonesBlack = {
-        {{0,0},{0,1}}, {{0,0}}, {{0,0},{1,0}}, {{0,0},{0,1},{1,0},{1,1}}
+        {{0,0},{0,1}}, {{0,0}}, {{0,0}}, {{0,0},{1,0}}, {{0,0},{0,1},{1,0},{1,1}}
     };
     vector< vector<pair<int,int> > > stonesRed = stonesBlack;
     vector<vector<pair<int,int> > > stonesYellow = stonesBlack;
@@ -230,9 +231,9 @@ enum keyType {
 
 cellType getCellType(int ID) {
     if(ID == 0) return AIR;
-    else if(ID > 0 && ID < 10) return PLAYER;
-    else if(ID >= 10 && ID < 1000) return ENEMY;
-    else if(ID >= 1000) return UNMOVABLE_ENEMY;
+    else if(ID > 0 && ID < 1000000) return PLAYER;
+    else if(ID >= 1000000 && ID < 2000000) return ENEMY;
+    else if(ID >= 2000000) return UNMOVABLE_ENEMY;
     return UNMOVABLE_ENEMY;
 }
 
@@ -488,7 +489,7 @@ void runThread(int threadID, int size, bool symmetric) {
         int symFieldSize = size;
         int fieldSize = size;
 		deque<deque<int> > field;
-		if(symmetric) field = initField(fieldSize, fieldSize);
+		if(!symmetric) field = initField(fieldSize, fieldSize);
 		else field = initSymmetricField(symFieldSize, symFieldSize);
         
         pair<long long, int> solutionInfo = bfsSolveNeat(field, 50000);
@@ -527,7 +528,7 @@ int main() {
     cout << "Executing with: " << threadCount << " threads." << endl;
     int size = 9;
     for(int i = 0; i < threadCount; ++i) {
-        threads[i] = thread(runThread,i,size);
+        threads[i] = thread(runThread,i,size,false);
     }
     threads[0].join();
     //arr[0].join(); //wait forever
