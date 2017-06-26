@@ -15,8 +15,15 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 
 using namespace std;
 
-int GLOBAL_DEPTH = 100, enough = 28;
 int threadCount = 45;
+int blocksPushForInstantWin = 10; //how much the field has to be widened for win position.
+int limitBound = 1000000; //much better
+int enough = 24; //print anyways
+
+
+//Currently ignored
+int GLOBAL_DEPTH = 100;
+
 
 std::recursive_mutex m_mutex;
 int globalCounter = 4;
@@ -218,10 +225,6 @@ deque<deque<int> > initSymmetricField(int fh, int fw) {
 
 
 
-
-
-
-
 enum cellType {
     AIR=0, PLAYER=1, ENEMY=2, UNMOVABLE_ENEMY=3, SUPERAIR=4
 };
@@ -357,35 +360,35 @@ int bfsSolve (deque<deque<int> > input) {
 	int steps = 0;
     while(q.size() != 0) {
 		steps++;
-	if(q.size() > 40000) return -1;
+	if(q.size() > limitBound) return -1;
         pair<int, deque<deque<int> > > current = q.front();
         q.pop();
         if(alreadyPassed.count(current.second) == 0) {
             alreadyPassed.insert(current.second);
             deque<deque<int> > moveGrid = current.second;
             if(move(UP, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return current.first;
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return current.first;
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
             }
             moveGrid = current.second;
             if(move(DOWN, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return current.first;
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return current.first;
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
             }
             moveGrid = current.second;
             if(move(LEFT, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return current.first;
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return current.first;
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
             }
             moveGrid = current.second;
             if(move(RIGHT, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return current.first;
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return current.first;
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
@@ -419,28 +422,28 @@ long long steps = 0;
             alreadyPassed.insert(current.second);
             deque<deque<int> > moveGrid = current.second;
             if(move(UP, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return {steps * current.first,current.first};
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
             }
             moveGrid = current.second;
             if(move(DOWN, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return {steps * current.first,current.first};
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
             }
             moveGrid = current.second;
             if(move(LEFT, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return {steps * current.first,current.first};
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
             }
             moveGrid = current.second;
             if(move(RIGHT, playerID, moveGrid)) {
-                if(current.second.size() > input.size()+2 || current.second[0].size() > input[0].size()+2) return {steps * current.first,current.first};
+                if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
                 if(current.first < GLOBAL_DEPTH) {
                     q.push({current.first + 1, moveGrid});
                 }
