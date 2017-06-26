@@ -16,9 +16,9 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 using namespace std;
 
 int threadCount = 45;
-int blocksPushForInstantWin = 10; //how much the field has to be widened for win position.
-int limitBound = 1000000; //much better
-int enough = 24; //print anyways
+int blocksPushForInstantWin = 5; //how much the field has to be widened for win position.
+int limitBound = 250000; //much better
+int enough = 20; //print anyways
 
 
 //Currently ignored
