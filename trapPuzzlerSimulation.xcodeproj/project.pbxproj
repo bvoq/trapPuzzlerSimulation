@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		636E1B571D5CAA6F0010DFDF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 636E1B561D5CAA6F0010DFDF /* main.cpp */; };
+		63DA9B211F55B85C00B45590 /* main2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 63DA9B201F55B85C00B45590 /* main2.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		636E1B531D5CAA6F0010DFDF /* trapPuzzlerSimulation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = trapPuzzlerSimulation; sourceTree = BUILT_PRODUCTS_DIR; };
-		636E1B561D5CAA6F0010DFDF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		63DA9B201F55B85C00B45590 /* main2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main2.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +57,7 @@
 		636E1B551D5CAA6F0010DFDF /* trapPuzzlerSimulation */ = {
 			isa = PBXGroup;
 			children = (
-				636E1B561D5CAA6F0010DFDF /* main.cpp */,
+				63DA9B201F55B85C00B45590 /* main2.cpp */,
 			);
 			path = trapPuzzlerSimulation;
 			sourceTree = "<group>";
@@ -118,7 +118,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				636E1B571D5CAA6F0010DFDF /* main.cpp in Sources */,
+				63DA9B211F55B85C00B45590 /* main2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +239,7 @@
 				636E1B5C1D5CAA6F0010DFDF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
