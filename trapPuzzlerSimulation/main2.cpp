@@ -15,7 +15,7 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 
 using namespace std;
 
-int threadCount = 1;
+int threadCount = 7;
 int blocksPushForInstantWin = 3; //how much the field has to be widened for win position.
 int limitBound = 100000; //much better
 int enough = 27; //print anyways
@@ -405,6 +405,7 @@ int bfsSolve (deque<deque<int> > input) {
 //-1 = unsolvable (trapped)
 //-2 = no solution found in maxstep steps, but could still technically have a solution.
 pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
+	levelExport(cout, input);
     cropBordersOf(input);
     int playerID = 1;
     queue<pair<int, deque<deque<int> > > > q;
@@ -454,7 +455,7 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 				//dfs to check for cheapie
 				queue<deque<deque<int> > > dfsQ;
 				dfsQ.push(moveGrid);
-				cout << "dfs no: " << steps << endl;
+				//cout << "dfs no: " << steps << endl;
 				while(!dfsQ.empty()){
 					deque<deque<int> > moveGrid = dfsQ.front();
 					dfsQ.pop();
@@ -464,13 +465,13 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 						for(int j = 0; j < moveGrid[i].size(); ++j)
 							if(getCellType(moveGrid[i][j]) == PLAYER) playerPos.insert(make_pair(i, j)); //	CHANGE FOR MULTIPLE PLAYERS
 						
-					cout << "player set done" << endl;
+					//cout << "player set done" << endl;
 					bool up = true, down = true, right = true, left = true;
 					for(auto p : playerPos){
-						if(moveGrid[p.first-1][p.second] != 0) up = false;
-						if(moveGrid[p.first+1][p.second] != 0) down = false;
-						if(moveGrid[p.first][p.second-1] != 0) left = false;
-						if(moveGrid[p.first][p.second+1] != 0) right = false;
+						if(p.first && moveGrid[p.first-1][p.second] != 0) up = false;
+						if(p.first < moveGrid.size() -1 && moveGrid[p.first+1][p.second] != 0) down = false;
+						if(p.second && moveGrid[p.first][p.second-1] != 0) left = false;
+						if(p.second < moveGrid[p.first].size() -1 && moveGrid[p.first][p.second+1] != 0) right = false;
 					}
 					if(up){
 						deque<deque<int> > grid = moveGrid;
