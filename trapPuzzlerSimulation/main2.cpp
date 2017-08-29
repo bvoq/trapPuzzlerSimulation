@@ -399,13 +399,29 @@ int bfsSolve (deque<deque<int> > input) {
     return -1;
 }
 
+void levelExport(ostream & o, deque<deque<int> > copied) {
+    cropBordersOf(copied);
+    o << "{";
+    for(int i = 0; i < copied.size(); ++i) {
+        o << "{";
+        for(int j = 0; j < copied[i].size(); ++j) {
+            o << copied[i][j];
+            if(j != copied[i].size() - 1) o << ",";
+        }
+        o << "}";
+        if(i != copied.size() - 1) o << ",";
+    }
+    o << "}";
+}
+
 
 
 //calculates up to max step and then calculates step count * depth as output.
 //-1 = unsolvable (trapped)
 //-2 = no solution found in maxstep steps, but could still technically have a solution.
 pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
-	levelExport(cout, input);
+	//levelExport(cout, input);
+	//cout << endl << endl;
     cropBordersOf(input);
     int playerID = 1;
     queue<pair<int, deque<deque<int> > > > q;
@@ -519,20 +535,6 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 
 
 
-void levelExport(ostream & o, deque<deque<int> > copied) {
-    cropBordersOf(copied);
-    o << "{";
-    for(int i = 0; i < copied.size(); ++i) {
-        o << "{";
-        for(int j = 0; j < copied[i].size(); ++j) {
-            o << copied[i][j];
-            if(j != copied[i].size() - 1) o << ",";
-        }
-        o << "}";
-        if(i != copied.size() - 1) o << ",";
-    }
-    o << "}";
-}
 
 long long globalBiggestSolved = 0;
 long long globalBiggestSolvedDepth = 0;
