@@ -360,6 +360,7 @@ int bfsSolve (deque<deque<int> > input) {
 	int steps = 0;
     while(q.size() != 0) {
 		steps++;
+		cout << "it: " << steps << endl;
 	if(q.size() > limitBound) return -1;
         pair<int, deque<deque<int> > > current = q.front();
         q.pop();
@@ -492,7 +493,7 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 					if(up){
 						deque<deque<int> > grid = moveGrid;
 						assert(move(UP, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
+						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
@@ -501,7 +502,7 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 					if(down){
 						auto grid = moveGrid;
 						assert(move(DOWN, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
+						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
@@ -510,7 +511,7 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 					if(left){
 						auto grid = moveGrid;
 						assert(move(LEFT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
+						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
@@ -519,7 +520,7 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 					if(right){
 						auto grid = moveGrid;
 						assert(move(RIGHT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
+						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
