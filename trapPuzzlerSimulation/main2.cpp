@@ -454,60 +454,61 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 				//dfs to check for cheapie
 				queue<deque<deque<int> > > dfsQ;
 				dfsQ.push(moveGrid);
+				cout << "dfs no: " << steps << endl;
 				while(!dfsQ.empty()){
-					auto move = dfsQ.front();
+					deque<deque<int> > moveGrid = dfsQ.front();
 					dfsQ.pop();
 					set<pair<int, int> > playerPos;
 					//add player positions to set
-					for(int i = 0; i < move.size(); ++i)
-						for(int j = 0; j < move[i].size(); ++j)
-							if(getCellType(move[i][j]) == PLAYER) playerPos.insert(make_pair(i, j)); //	CHANGE FOR MULTIPLE PLAYERS
+					for(int i = 0; i < moveGrid.size(); ++i)
+						for(int j = 0; j < moveGrid[i].size(); ++j)
+							if(getCellType(moveGrid[i][j]) == PLAYER) playerPos.insert(make_pair(i, j)); //	CHANGE FOR MULTIPLE PLAYERS
 						
-						
+					cout << "player set done" << endl;
 					bool up = true, down = true, right = true, left = true;
 					for(auto p : playerPos){
-						if(move[p.first-1][p.second] != 0) up = false;
-						if(move[p.first+1][p.second] != 0) down = false;
-						if(move[p.first][p.second-1] != 0) left = false;
-						if(move[p.first][p.second+1] != 0) right = false;
+						if(moveGrid[p.first-1][p.second] != 0) up = false;
+						if(moveGrid[p.first+1][p.second] != 0) down = false;
+						if(moveGrid[p.first][p.second-1] != 0) left = false;
+						if(moveGrid[p.first][p.second+1] != 0) right = false;
 					}
 					if(up){
-						auto grid = move;
+						deque<deque<int> > grid = moveGrid;
 						assert(move(UP, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof move) return {steps * current.first, current.first};
+						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
 						}
 					}
 					if(down){
-						auto grid = move;
+						auto grid = moveGrid;
 						assert(move(DOWN, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof move) return {steps * current.first, current.first};
+						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
 						}
 					}
 					if(left){
-						auto grid = move;
+						auto grid = moveGrid;
 						assert(move(LEFT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof move) return {steps * current.first, current.first};
+						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
 						}
 					}
 					if(right){
-						auto grid = move;
+						auto grid = moveGrid;
 						assert(move(RIGHT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(sizeof grid != sizeof move) return {steps * current.first, current.first};
+						if(sizeof grid != sizeof moveGrid) return {steps * current.first, current.first};
 						if(!dfsPassed.count(grid)){
 							dfsPassed.insert(grid);
 							dfsQ.push(grid);
 						}
 					}
-				}	
+				
 			}
         }
     }
