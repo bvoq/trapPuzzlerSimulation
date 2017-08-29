@@ -16,9 +16,9 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 using namespace std;
 
 int threadCount = 45;
-int blocksPushForInstantWin = 5; //how much the field has to be widened for win position.
-int limitBound = 250000; //much better
-int enough = 20; //print anyways
+int blocksPushForInstantWin = 3; //how much the field has to be widened for win position.
+int limitBound = 100000; //much better
+int enough = 27; //print anyways
 
 
 //Currently ignored
@@ -38,8 +38,8 @@ deque<deque<int> > initField(int h, int w) {
     vector< vector<pair<int,int> > > stonesRed = stonesBlack;
     vector<vector<pair<int,int> > > stonesYellow = stonesBlack;
     int yellowBlocksToBePlaced = 1;
-    int darkBlocksToBePlaced = 11 + (rand() % 20) - 3;
-    int redBlocksToBePlaced = 7 + (rand()%20) - 3;
+    int darkBlocksToBePlaced = 15 + (rand() % 15);
+    int redBlocksToBePlaced = 10 + (rand()%10);
     
     
     
@@ -476,7 +476,7 @@ long long globalBiggestSolved = 0;
 long long globalBiggestSolvedDepth = 0;
 
 void runThread(int threadID, int size, bool symmetric) {
-    srand(threadID);
+    srand(time(0));
     long long biggestSolved = 0;
     long long biggestSolvedDepth = 0;
     //deque<deque<int> > debugLevel = {{0,0,105,105,0,0,0,0,0,0},{0,0,0,0,0,0,0,102,0,0},{0,0,1002,1002,0,0,0,102,0,0},{0,0,0,0,0,0,101,1001,0,0},{0,0,0,0,0,0,101,0,1003,0},{0,0,0,0,0,0,0,0,1003,0},{0,0,0,0,0,0,0,0,0,0},{103,103,0,0,0,0,0,0,0,1},{1004,0,0,0,0,0,104,0,0,1},{1004,0,0,0,0,0,0,0,0,0}};
@@ -529,7 +529,7 @@ int main() {
     
     thread threads[threadCount];
     cout << "Executing with: " << threadCount << " threads." << endl;
-    int size = 9;
+    int size = 10;
     for(int i = 0; i < threadCount; ++i) {
         threads[i] = thread(runThread,i,size,false);
     }
