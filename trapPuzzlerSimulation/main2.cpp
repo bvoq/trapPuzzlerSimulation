@@ -15,7 +15,7 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 
 using namespace std;
 
-int threadCount = 7;
+int threadCount = 46;
 int blocksPushForInstantWin = 3; //how much the field has to be widened for win position.
 int limitBound = 100000; //much better
 int enough = 27; //print anyways
@@ -31,7 +31,7 @@ int globalCounter = 4;
 
 deque<deque<int> > initField(int h, int w) {
     deque<deque<int> > field(h, deque<int> (w,0));
-    
+
     vector< vector<pair<int, int> > > stonesBlack = {
         {{0,0},{0,1}}, {{0,0}}, {{0,0}}, {{0,0},{1,0}}, {{0,0},{0,1},{1,0},{1,1}}
     };
@@ -40,9 +40,9 @@ deque<deque<int> > initField(int h, int w) {
     int yellowBlocksToBePlaced = 1;
     int darkBlocksToBePlaced = 15 + (rand() % 15);
     int redBlocksToBePlaced = 10 + (rand()%10);
-    
-    
-    
+
+
+
     while(yellowBlocksToBePlaced != 0) {
         int offsetY = rand() % h; int offsetX = rand() % w;
         offsetY = h/2; offsetX = w/2;
@@ -110,7 +110,7 @@ deque<deque<int> > initField(int h, int w) {
 deque<deque<int> > initSymmetricField(int fh, int fw) {
 	assert(fh % 2 == 1 && fh == fw && fw > 2); //remove for efficiency
     deque<deque<int> > field(fh, deque<int> (fw,0));
-    
+
     vector< vector<pair<int, int> > > stonesBlack = {
         {{0,0},{0,1}}, {{0,0}}, {{0,0}}, {{0,0},{1,0}}, {{0,0},{0,1},{1,0},{1,1}}
     };
@@ -119,13 +119,13 @@ deque<deque<int> > initSymmetricField(int fh, int fw) {
     int yellowBlocksToBePlaced = 1;
 	int darkBlocksToBePlaced = 7 + (rand() % 11) - 4;
     int redBlocksToBePlaced = 4 + (rand()%11) - 4;
-   	int totBlocks = darkBlocksToBePlaced + redBlocksToBePlaced + 20; 
-  	
+   	int totBlocks = darkBlocksToBePlaced + redBlocksToBePlaced + 20;
+
 	int w = fh/2, h = fw / 2;
 
 	field[w][h] = 1;
 	++w;++h;
-   /* 
+   /*
     while(yellowBlocksToBePlaced != 0) {
         int offsetY = rand() % h; int offsetX = rand() % w;
         int randTile = rand() % stonesYellow.size();
@@ -335,13 +335,13 @@ bool move(keyType input, int playerID, deque<deque<int> > & moveGrid) {
     for(auto & it : moveGrid) {it.push_front(0); it.push_back(0);}
     moveGrid.push_front(deque<int>(moveGrid[0].size(),0));
     moveGrid.push_back(deque<int>(moveGrid[0].size(),0));
-    
+
     deque<deque<int> > tempGrid = moveGrid;
-    
+
     set<int> checked;
     set<pair<int, int> > eyesToChange;
     int theReturn = moveTile(playerID, input, checked, tempGrid, moveGrid);
-    
+
     cropBordersOf(moveGrid);
     if(theReturn != -1) {
         return true;
@@ -441,34 +441,34 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 				alreadyPassed.insert(current.second);
 				deque<deque<int> > moveGrid = current.second;
 				if(move(UP, playerID, moveGrid)) {
-					if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
 					if(current.first < GLOBAL_DEPTH) {
 						q.push({current.first + 1, moveGrid});
 					}
 				}
 				moveGrid = current.second;
 				if(move(DOWN, playerID, moveGrid)) {
-					if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
 					if(current.first < GLOBAL_DEPTH) {
 						q.push({current.first + 1, moveGrid});
 					}
 				}
 				moveGrid = current.second;
 				if(move(LEFT, playerID, moveGrid)) {
-					if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
 					if(current.first < GLOBAL_DEPTH) {
 						q.push({current.first + 1, moveGrid});
 					}
 				}
 				moveGrid = current.second;
 				if(move(RIGHT, playerID, moveGrid)) {
-					if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
 					if(current.first < GLOBAL_DEPTH) {
 						q.push({current.first + 1, moveGrid});
 					}
 				}
 				moveGrid = current.second;
-				
+
 				//dfs to check for cheapie
 				queue<deque<deque<int> > > dfsQ;
 				dfsQ.push(moveGrid);
@@ -481,14 +481,14 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 					for(int i = 0; i < moveGrid.size(); ++i)
 						for(int j = 0; j < moveGrid[i].size(); ++j)
 							if(getCellType(moveGrid[i][j]) == PLAYER) playerPos.insert(make_pair(i, j)); //	CHANGE FOR MULTIPLE PLAYERS
-						
+
 					//cout << "player set done" << endl;
 					bool up = true, down = true, right = true, left = true;
 					for(auto p : playerPos){
-						if(p.first && moveGrid[p.first-1][p.second] != 0) up = false;
-						if(p.first < moveGrid.size() -1 && moveGrid[p.first+1][p.second] != 0) down = false;
-						if(p.second && moveGrid[p.first][p.second-1] != 0) left = false;
-						if(p.second < moveGrid[p.first].size() -1 && moveGrid[p.first][p.second+1] != 0) right = false;
+						if(p.first && moveGrid[p.first-1][p.second] >=1000000) up = false;
+						if(p.first < moveGrid.size() -1 && moveGrid[p.first+1][p.second] >=1000000) down = false;
+						if(p.second && moveGrid[p.first][p.second-1] >=1000000) left = false;
+						if(p.second < moveGrid[p.first].size() -1 && moveGrid[p.first][p.second+1] >=1000000) right = false;
 					}
 					if(up){
 						deque<deque<int> > grid = moveGrid;
@@ -526,7 +526,7 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 							dfsQ.push(grid);
 						}
 					}
-				
+
 			}
         }
     }
@@ -547,19 +547,19 @@ void runThread(int threadID, int size, bool symmetric) {
     //deque<deque<int> > debugLevel = {{0,0,105,105,0,0,0,0,0,0},{0,0,0,0,0,0,0,102,0,0},{0,0,1002,1002,0,0,0,102,0,0},{0,0,0,0,0,0,101,1001,0,0},{0,0,0,0,0,0,101,0,1003,0},{0,0,0,0,0,0,0,0,1003,0},{0,0,0,0,0,0,0,0,0,0},{103,103,0,0,0,0,0,0,0,1},{1004,0,0,0,0,0,104,0,0,1},{1004,0,0,0,0,0,0,0,0,0}};
     //int hi = bfsSolve(debugLevel);
     //cout << "SOLVED: " << hi << endl;
-    
+
     int incrSuccess = 10000000 * threadID;
-    
+
     int trapCount = 0;
     int tooLongCount = 0;
-    
+
     for(long long i = 0; i < 10000000000000000; ++i) {
         int symFieldSize = size;
         int fieldSize = size;
 		deque<deque<int> > field;
 		if(!symmetric) field = initField(fieldSize, fieldSize);
 		else field = initSymmetricField(symFieldSize, symFieldSize);
-        
+
         pair<long long, int> solutionInfo = bfsSolveNeat(field, 50000);
         long long hasSolved = solutionInfo.first;
         int depthSolved = solutionInfo.second ;
@@ -570,14 +570,14 @@ void runThread(int threadID, int size, bool symmetric) {
         if(/*hasSolved >= enough ||*/ hasSolved >= biggestSolved || depthSolved >= biggestSolvedDepth) {
             if(hasSolved > biggestSolved) biggestSolved = hasSolved;
             if(depthSolved > biggestSolvedDepth) biggestSolvedDepth = depthSolved;
-            
+
             synchronized(m_mutex) {
                 if(hasSolved >= globalBiggestSolved || depthSolved >= globalBiggestSolvedDepth) {
                     globalCounter++;
-                
+
                     if(hasSolved > globalBiggestSolved) globalBiggestSolved = hasSolved;
                     if(depthSolved > globalBiggestSolvedDepth) globalBiggestSolvedDepth = depthSolved;
-                
+
                     levelExport(cout, field);
                     cout  << ";" << endl;
                     cout << "//" << hasSolved << " depth: " << depthSolved  << " traps: " << trapCount << " toolong: " << tooLongCount << " no.: " << globalCounter << " thread: " << threadID << endl;
@@ -591,7 +591,7 @@ void runThread(int threadID, int size, bool symmetric) {
 
 int main() {
     //runThread(73);
-    
+
     thread threads[threadCount];
     cout << "Executing with: " << threadCount << " threads." << endl;
     int size = 10;
