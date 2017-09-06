@@ -15,6 +15,8 @@ for(std::unique_lock<std::recursive_mutex> lk(m); lk; lk.unlock())
 
 using namespace std;
 
+int minPlayers = 3;
+int maxPlayers = 3;
 int threadCount = 46;
 int blocksPushForInstantWin = 3; //how much the field has to be widened for win position.
 int limitBound = 100000; //much better
@@ -37,15 +39,13 @@ deque<deque<int> > initField(int h, int w) {
     };
     vector< vector<pair<int,int> > > stonesRed = stonesBlack;
     vector<vector<pair<int,int> > > stonesYellow = stonesBlack;
-    int yellowBlocksToBePlaced = 1;
+    int yellowBlocksToBePlaced = minPlayers+(rand()%(maxPlayers-minPlayers+1));
     int darkBlocksToBePlaced = 15 + (rand() % 15);
     int redBlocksToBePlaced = 10 + (rand()%10);
 
-
-
     while(yellowBlocksToBePlaced != 0) {
-        int offsetY = rand() % h; int offsetX = rand() % w;
-        offsetY = h/2; offsetX = w/2;
+        //offsetY = h/2; offsetX = w/2;
+        int offsetY = (rand() % (h-1))+1; int offsetX = (rand() % (w-1))+1;
         int randTile = rand() % stonesYellow.size();
         bool noAdd = false;
         for(int i = 0; i < stonesYellow[randTile].size(); ++i) {
@@ -257,13 +257,15 @@ int moveTile(int elementId, keyType input, set<int>& checked, deque<deque<int> >
                 else if(input == DOWN) {i = k + 1; j = l;}
                 else if(input == LEFT) {i = k; j = l - 1;}
                 else if(input == RIGHT) {i = k; j = l + 1;}
-                cellType cT = getCellType(moveGrid[i][j]);
-                int cB = 0;
-                if(cT == ENEMY || cT == PLAYER) cB = moveTile(moveGrid[i][j], input, checked, tempGrid, moveGrid);
-                else if(cT == UNMOVABLE_ENEMY) return -1;
-                if(cB == -1) return -1;
-                moveGrid[i][j] = elementId;
-                tempGrid[k][l] = 0;
+                if(i < moveGrid.size() && i >= 0 && j < moveGrid[0].size() && j >= 0){
+                    cellType cT = getCellType(moveGrid[i][j]);
+                    int cB = 0;
+                    if(cT == ENEMY || cT == PLAYER) cB = moveTile(moveGrid[i][j], input, checked, tempGrid, moveGrid);
+                    else if(cT == UNMOVABLE_ENEMY) return -1;
+                    if(cB == -1) return -1;
+                    moveGrid[i][j] = elementId;
+                    tempGrid[k][l] = 0;
+                }
             }
         }
     }
@@ -424,7 +426,13 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
 	//levelExport(cout, input);
 	//cout << endl << endl;
     cropBordersOf(input);
-    int playerID = 1;
+    //int playerID = 1;
+    set<int> playerIDs;
+    for(auto a : input){
+        for(int b : a){
+            if(b < 1000000) playerIDs.insert(b);
+        }
+    }
     queue<pair<int, deque<deque<int> > > > q;
     q.push({1,input});
     //long long t = time(0);
@@ -432,104 +440,128 @@ pair<long long,int> bfsSolveNeat (deque<deque<int> > input, int maxStep) {
     set<deque<deque<int> > > dfsPassed;
 
 	long long steps = 0;
+    deque<deque<int> > moveGrid;
     while(q.size() != 0) {
 		steps++;
 		if(steps > maxStep) return {-2,-2}; //even more difficult then solvable
 			pair<int, deque<deque<int> > > current = q.front();
 			q.pop();
-			if(alreadyPassed.count(current.second) == 0) {
-				alreadyPassed.insert(current.second);
-				deque<deque<int> > moveGrid = current.second;
-				if(move(UP, playerID, moveGrid)) {
-					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
-					if(current.first < GLOBAL_DEPTH) {
-						q.push({current.first + 1, moveGrid});
-					}
-				}
-				moveGrid = current.second;
-				if(move(DOWN, playerID, moveGrid)) {
-					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
-					if(current.first < GLOBAL_DEPTH) {
-						q.push({current.first + 1, moveGrid});
-					}
-				}
-				moveGrid = current.second;
-				if(move(LEFT, playerID, moveGrid)) {
-					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
-					if(current.first < GLOBAL_DEPTH) {
-						q.push({current.first + 1, moveGrid});
-					}
-				}
-				moveGrid = current.second;
-				if(move(RIGHT, playerID, moveGrid)) {
-					//if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
-					if(current.first < GLOBAL_DEPTH) {
-						q.push({current.first + 1, moveGrid});
-					}
-				}
-				moveGrid = current.second;
+			for(int playerID : playerIDs){
+                if(alreadyPassed.count(current.second) == 0) {
+                    alreadyPassed.insert(current.second);
+                    moveGrid = current.second;
+                    if(move(UP, playerID, moveGrid)) {
+                        //if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+                        if(current.first < GLOBAL_DEPTH) {
+                            q.push({current.first + 1, moveGrid});
+                        }
+                    }
+                    moveGrid = current.second;
+                    if(move(DOWN, playerID, moveGrid)) {
+                        //if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+                        if(current.first < GLOBAL_DEPTH) {
+                            q.push({current.first + 1, moveGrid});
+                        }
+                    }
+                    moveGrid = current.second;
+                    if(move(LEFT, playerID, moveGrid)) {
+                        //if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+                        if(current.first < GLOBAL_DEPTH) {
+                            q.push({current.first + 1, moveGrid});
+                        }
+                    }
+                    moveGrid = current.second;
+                    if(move(RIGHT, playerID, moveGrid)) {
+                        //if(current.second.size() > input.size()+blocksPushForInstantWin || current.second[0].size() > input[0].size()+blocksPushForInstantWin) return {steps * current.first,current.first};
+                        if(current.first < GLOBAL_DEPTH) {
+                            q.push({current.first + 1, moveGrid});
+                        }
+                    }
+                    moveGrid = current.second;
+                }
+			}
 
-				//dfs to check for cheapie
-				queue<deque<deque<int> > > dfsQ;
-				dfsQ.push(moveGrid);
-				//cout << "dfs no: " << steps << endl;
-				while(!dfsQ.empty()){
-					deque<deque<int> > moveGrid = dfsQ.front();
-					dfsQ.pop();
-					set<pair<int, int> > playerPos;
-					//add player positions to set
-					for(int i = 0; i < moveGrid.size(); ++i)
-						for(int j = 0; j < moveGrid[i].size(); ++j)
-							if(getCellType(moveGrid[i][j]) == PLAYER) playerPos.insert(make_pair(i, j)); //	CHANGE FOR MULTIPLE PLAYERS
+            //temp win check for multiple players
+            vector<bool> out(playerIDs.size(), false);
+            for(int i = 0; i < moveGrid.size(); ++i){
+                for(int j = 0; j < moveGrid[0].size(); ++j){
+                    if(moveGrid[i][j]-1 < 1000000){
+                        if(!i || !j || i >= moveGrid.size()-1 || j >= moveGrid[0].size()-1) out[moveGrid[i][j]-1] = true;
+                    }
+                }
+            }
+            bool success = true;
+            for(bool b : out){
+                if(!b) success = false;
+            }
+            if(success){
+                return make_pair(steps*current.first, current.first);
+            }
 
-					//cout << "player set done" << endl;
-					bool up = true, down = true, right = true, left = true;
-					for(auto p : playerPos){
-						if(p.first && moveGrid[p.first-1][p.second] >=1000000) up = false;
-						if(p.first < moveGrid.size() -1 && moveGrid[p.first+1][p.second] >=1000000) down = false;
-						if(p.second && moveGrid[p.first][p.second-1] >=1000000) left = false;
-						if(p.second < moveGrid[p.first].size() -1 && moveGrid[p.first][p.second+1] >=1000000) right = false;
-					}
-					if(up){
-						deque<deque<int> > grid = moveGrid;
-						assert(move(UP, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
-						if(!dfsPassed.count(grid)){
-							dfsPassed.insert(grid);
-							dfsQ.push(grid);
-						}
-					}
-					if(down){
-						auto grid = moveGrid;
-						assert(move(DOWN, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
-						if(!dfsPassed.count(grid)){
-							dfsPassed.insert(grid);
-							dfsQ.push(grid);
-						}
-					}
-					if(left){
-						auto grid = moveGrid;
-						assert(move(LEFT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
-						if(!dfsPassed.count(grid)){
-							dfsPassed.insert(grid);
-							dfsQ.push(grid);
-						}
-					}
-					if(right){
-						auto grid = moveGrid;
-						assert(move(RIGHT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
-						if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
-						if(!dfsPassed.count(grid)){
-							dfsPassed.insert(grid);
-							dfsQ.push(grid);
-						}
-					}
+            if(playerIDs.size() == 1){
+                //dfs to check for cheapie
+                queue<deque<deque<int> > > dfsQ;
+                dfsQ.push(moveGrid);
+                //cout << "dfs no: " << steps << endl;
+                while(!dfsQ.empty()){
+                    deque<deque<int> > moveGrid = dfsQ.front();
+                    dfsQ.pop();
+                    vector<set<pair<int, int> > > playerPosSet(playerIDs.size());
+                    //add player positions to set
+                    for(int i = 0; i < moveGrid.size(); ++i)
+                        for(int j = 0; j < moveGrid[i].size(); ++j)
+                            if(getCellType(moveGrid[i][j]) == PLAYER) playerPosSet[moveGrid[i][j]-1].insert(make_pair(i, j));
 
+                    //cout << "player set done" << endl;
+                    bool possible = false;
+                    for(auto playerPos : playerPosSet){
+                        bool up = true, down = true, right = true, left = true;
+                        for(auto p : playerPos){
+                            if(p.first && moveGrid[p.first-1][p.second] >=1000000) up = false;
+                            if(p.first < moveGrid.size() -1 && moveGrid[p.first+1][p.second] >=1000000) down = false;
+                            if(p.second && moveGrid[p.first][p.second-1] >=1000000) left = false;
+                            if(p.second < moveGrid[p.first].size() -1 && moveGrid[p.first][p.second+1] >=1000000) right = false;
+                        }
+                        if(up){
+                            deque<deque<int> > grid = moveGrid;
+                            assert(move(UP, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
+                            if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
+                            if(!dfsPassed.count(grid)){
+                                dfsPassed.insert(grid);
+                                dfsQ.push(grid);
+                            }
+                        }
+                        if(down){
+                            auto grid = moveGrid;
+                            assert(move(DOWN, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
+                            if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
+                            if(!dfsPassed.count(grid)){
+                                dfsPassed.insert(grid);
+                                dfsQ.push(grid);
+                            }
+                        }
+                        if(left){
+                            auto grid = moveGrid;
+                            assert(move(LEFT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
+                            if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
+                            if(!dfsPassed.count(grid)){
+                                dfsPassed.insert(grid);
+                                dfsQ.push(grid);
+                            }
+                        }
+                        if(right){
+                            auto grid = moveGrid;
+                            assert(move(RIGHT, 1, grid)); //CHANGE FOR MULTIPLE PLAYERS
+                            if(grid.size() != moveGrid.size() || grid[0].size() != moveGrid[0].size()) return {steps * current.first, current.first};
+                            if(!dfsPassed.count(grid)){
+                                dfsPassed.insert(grid);
+                                dfsQ.push(grid);
+                            }
+                        }
+                    }
+                }
 			}
         }
-    }
     return {-1,-1};
 }
 
@@ -560,7 +592,7 @@ void runThread(int threadID, int size, bool symmetric) {
 		if(!symmetric) field = initField(fieldSize, fieldSize);
 		else field = initSymmetricField(symFieldSize, symFieldSize);
 
-        pair<long long, int> solutionInfo = bfsSolveNeat(field, 50000);
+        pair<long long, int> solutionInfo = bfsSolveNeat(field, 1000000);
         long long hasSolved = solutionInfo.first;
         int depthSolved = solutionInfo.second ;
         if(trapCount == -1) trapCount++;
